@@ -70,6 +70,10 @@
     text-align: center;
     width: 34px;
   }
+
+  .square--winner{
+    border: 2px solid #999;
+  }
   
   .board-row:after {
     clear: both;
