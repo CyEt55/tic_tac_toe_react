@@ -72,7 +72,7 @@
   }
 
   .square--winner{
-    border: 2px solid #999;
+    background-color: #999;
   }
   
   .board-row:after {
