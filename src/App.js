@@ -6,7 +6,10 @@ function Square({ value, onSquareClick, isWinning }){
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({ xIsNext, squares, onPlay, updateCoordinates }) {
+
+  const location = [[1,1],[2,1],[3,1],[1,2],[2,2],[3,2],[1,3],[2,3],[3,3]];
+  let coor = [];
 
   function handleClick(i){
     if(calculateWinner(squares) || squares[i]){
@@ -19,17 +22,15 @@ function Board({ xIsNext, squares, onPlay }) {
       nextSquares[i] = "O";
     }
     onPlay(nextSquares);
+    coor = location[i];
   }
 
   const winner = calculateWinner(squares);
   let status;
-  let line = '';
   if(winner){
     status = "Winner: " + winner.player;
-    line = winner;
   }else{
     status = "Next player: " + (xIsNext ? "X" : "O");
-    line = false;
   }
 
   let rows = [0,1,2];
@@ -41,7 +42,7 @@ function Board({ xIsNext, squares, onPlay }) {
       {rows.map((row, ind) => (
         <div className="board-row">
           {cells.map((cell, id) => (
-            <Square isWinning={winner ? winner.line.includes(ind * 3 + id) : false} value={squares[ind * 3 + id]} onSquareClick={() => handleClick(ind * 3 + id)}/>
+            <Square isWinning={winner ? winner.line.includes(ind * 3 + id) : false} value={squares[ind * 3 + id]} onSquareClick={() => {handleClick(ind * 3 + id); updateCoordinates(coor)}}/>
           ))}
         </div>
       ))};
@@ -50,9 +51,10 @@ function Board({ xIsNext, squares, onPlay }) {
 }
 
 export default function Game(){
-
+ 
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
+  const [coordinates, setCoordinates] = useState([Array(2).fill(null)]);   
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
   const [isDescending, setIsDescending] = useState(true);
@@ -67,16 +69,21 @@ export default function Game(){
     setCurrentMove(nextMove);
   }
 
+  const updateCoordinates = (coor) => {
+    const nextCoor = [...coordinates.slice(0, currentMove + 1), coor];
+    setCoordinates(nextCoor); 
+  }
+
   function orderHistory(){
       setIsDescending(!isDescending);
   }
 
-  const moves = history.map((squares, move) => {
+  const moves = history.map((step, move) => {
 
     let description;
 
     if(move > 0){
-      description = 'Go to move #' + move;
+      description = 'Go to move #' + move + " | " + coordinates[move];
     }else{
       description = 'Go to game start';
     }
@@ -101,7 +108,7 @@ export default function Game(){
   return(
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+        <Board updateCoordinates={updateCoordinates} xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
       </div>
       
       <div className="game-info">
