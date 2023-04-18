@@ -6,7 +6,7 @@ function Square({ value, onSquareClick, isWinning }){
   );
 }
 
-function Board({ xIsNext, squares, onPlay, updateCoordinates }) {
+function Board({ xIsNext, squares, onPlay, updateCoordinates, numMoves }) {
 
   const location = [[1,1],[2,1],[3,1],[1,2],[2,2],[3,2],[1,3],[2,3],[3,3]];
   let coor = [];
@@ -30,7 +30,7 @@ function Board({ xIsNext, squares, onPlay, updateCoordinates }) {
   if(winner){
     status = "Winner: " + winner.player;
   }else{
-    status = "Next player: " + (xIsNext ? "X" : "O");
+    status = numMoves.length === 10 ? "Draw" : "Next player: " + (xIsNext ? "X" : "O");
   }
 
   let rows = [0,1,2];
@@ -108,7 +108,7 @@ export default function Game(){
   return(
     <div className="game">
       <div className="game-board">
-        <Board updateCoordinates={updateCoordinates} xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+        <Board numMoves={moves} updateCoordinates={updateCoordinates} xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
       </div>
       
       <div className="game-info">
